@@ -1,128 +1,96 @@
 import React, { useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Settings, 
   Users, 
-  Search, 
-  Target, 
-  Lightbulb, 
-  DollarSign, 
-  MonitorPlay,
-  ArrowRight
+  MonitorPlay, 
+  ArrowRight, 
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 // ==========================================
-// CONFIGURATION DATA
+// DATA & ASSETS
 // ==========================================
-const CARDS_DATA = [
+const FEATURES = [
   {
     id: 1,
     title: "Welcome To Digi Crysta",
     description: "We are eager to brand your items by listening to your clients' and partners' daily steps in the creative process.",
-    icon: <Settings className="w-8 h-8" />,
-    color: "bg-blue-500",
-    gradient: "from-blue-400 to-blue-600"
+    icon: <Settings className="w-6 h-6" />,
+    color: "text-blue-400",
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/20"
   },
   {
     id: 2,
     title: "How do we operate?",
-    description: "As one of the top SEO companies, we guarantee to rank in the top 10. Furthermore, given the current situation, it is reasonable to increase traffic and produce online leads.",
-    icon: <MonitorPlay className="w-8 h-8" />,
-    color: "bg-cyan-500",
-    gradient: "from-cyan-400 to-blue-500"
+    description: "As one of the top SEO companies, we guarantee to rank in the top 10. We focus on increasing traffic and producing online leads.",
+    icon: <MonitorPlay className="w-6 h-6" />,
+    color: "text-cyan-400",
+    bg: "bg-cyan-500/10",
+    border: "border-cyan-500/20"
   },
   {
     id: 3,
     title: "What we do?",
-    description: "We have the ability to change business all around the world. When using various search engines, over 85% of internet users intend to make a purchase.",
-    icon: <Users className="w-8 h-8" />,
-    color: "bg-indigo-500",
-    gradient: "from-indigo-400 to-purple-600"
+    description: "We have the ability to change business all around the world. Over 85% of internet users intend to make a purchase via search.",
+    icon: <Users className="w-6 h-6" />,
+    color: "text-purple-400",
+    bg: "bg-purple-500/10",
+    border: "border-purple-500/20"
   }
 ];
 
 // ==========================================
-// SUB-COMPONENT: 3D TILT INFO CARD
+// ANIMATION VARIANTS
 // ==========================================
-const InfoCard = ({ card, index }) => {
-  // --- 3D TILT LOGIC ---
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseX = useSpring(x, { stiffness: 500, damping: 100 });
-  const mouseY = useSpring(y, { stiffness: 500, damping: 100 });
-
-  function handleMouseMove({ currentTarget, clientX, clientY }) {
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const xPct = (clientX - left) / width - 0.5;
-    const yPct = (clientY - top) / height - 0.5;
-    
-    x.set(xPct);
-    y.set(yPct);
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1
+    }
   }
+};
 
-  function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
+const itemVariants = {
+  hidden: { opacity: 0, x: 20 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { type: "spring", stiffness: 50 }
   }
+};
 
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], [10, -10]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-10, 10]);
-  
-  // Dynamic sheen gradient that follows mouse
-  const sheenGradient = useTransform(
-    mouseX,
-    [-0.5, 0.5],
-    ["linear-gradient(115deg, transparent 0%, rgba(255,255,255,0) 100%)", "linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.05) 100%)"]
-  );
-
+// ==========================================
+// COMPONENT: FEATURE CARD (Right Side)
+// ==========================================
+const FeatureCard = ({ feature }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-      viewport={{ once: true }}
-      className="relative w-full perspective-1000"
-      style={{ perspective: 1000 }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+    <motion.div 
+      variants={itemVariants}
+      whileHover={{ scale: 1.02, x: -10 }}
+      className={`group relative p-6 rounded-2xl border ${feature.border} bg-[#0f172a]/40 backdrop-blur-md hover:bg-[#0f172a]/60 transition-all duration-300 overflow-hidden`}
     >
-      <motion.div
-        style={{
-          rotateX,
-          rotateY,
-          transformStyle: "preserve-3d",
-        }}
-        className="group relative p-6 md:p-8 rounded-2xl bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] transition-shadow duration-300 hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.2)] overflow-hidden h-full"
-      >
-        {/* Sheen Overlay */}
-        <motion.div 
-          style={{ background: sheenGradient }}
-          className="absolute inset-0 z-20 pointer-events-none"
-        />
-
-        {/* Hover Gradient Background (Behind content) */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 transition-opacity duration-500 group-hover:opacity-10`} />
-        
-        {/* Content Container with Z-translation for depth */}
-        <div style={{ transform: "translateZ(20px)" }} className="relative z-10">
-          {/* Icon */}
-          <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl ${card.color} bg-opacity-10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner`}>
-            <div className={`text-${card.color.split('-')[1]}-400`}>
-              <span className="text-white group-hover:text-blue-200 transition-colors">
-                {card.icon}
-              </span>
-            </div>
-          </div>
-
-          <h3 className="text-lg md:text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
-            {card.title}
+      {/* Hover Glow Gradient */}
+      <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 bg-gradient-to-r ${feature.color.replace('text', 'from')} to-transparent`} />
+      
+      <div className="relative z-10 flex gap-5 items-start">
+        <div className={`shrink-0 w-12 h-12 rounded-xl ${feature.bg} flex items-center justify-center ${feature.color} border border-white/5 shadow-lg group-hover:shadow-${feature.color}/20`}>
+          {feature.icon}
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+            {feature.title}
           </h3>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            {card.description}
+          <p className="text-slate-400 text-sm leading-relaxed">
+            {feature.description}
           </p>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };
@@ -134,191 +102,127 @@ const AboutSection = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <section className="relative w-full py-16 md:py-24 bg-gradient-to-br from-[#021333] to-[#041e4d] overflow-hidden">
+    <section className="relative w-full py-20 lg:py-32 bg-gradient-to-br from-[#021333] to-[#041e4d] overflow-hidden">
       
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
+      {/* --- BACKGROUND ANIMATION (Moving Grid) --- */}
+      <div className="absolute inset-0 z-0 opacity-20">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
       </div>
+      
+      {/* Floating Orbs */}
+      <motion.div 
+        animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-20 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"
+      />
+      <motion.div 
+        animate={{ y: [0, 30, 0], opacity: [0.2, 0.5, 0.2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"
+      />
 
-      <div className="container mx-auto px-4 md:px-6 max-w-7xl relative z-10">
-
-        {/* --- TOP SECTION: 3D CARDS --- */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-20 md:mb-32">
-          {CARDS_DATA.map((card, idx) => (
-            <InfoCard key={card.id} card={card} index={idx} />
-          ))}
-        </div>
-
-        {/* --- BOTTOM SECTION: SPLIT CONTENT --- */}
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
+      <div className="container mx-auto px-6 relative z-10 max-w-7xl">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
-          {/* LEFT: THE "DIGITAL ORBIT" ANIMATION */}
-          <div className="w-full lg:w-1/2 relative h-[350px] md:h-[500px] flex items-center justify-center overflow-hidden lg:overflow-visible">
-            
-            <div className="relative w-full h-full flex items-center justify-center scale-[0.55] sm:scale-75 md:scale-100 origin-center transition-transform duration-300">
-                {/* Central Glow */}
-                <div className="absolute w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-
-                {/* Orbit Rings */}
-                <div className="absolute w-[300px] h-[300px] border border-dashed border-blue-400/30 rounded-full animate-spin-slow" />
-                <div className="absolute w-[450px] h-[450px] border border-dashed border-indigo-400/30 rounded-full animate-spin-reverse-slow" />
-
-                {/* Central Hub (Laptop Representation) */}
-                <motion.div 
-                  animate={{ y: [-10, 10, -10] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative z-10 w-40 h-28 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-2xl shadow-blue-500/30 flex items-center justify-center transform perspective-1000 rotate-x-12"
-                >
-                  {/* Screen Glow */}
-                  <div className="absolute inset-1 bg-white/10 rounded-lg blur-sm" />
-                  
-                  <div className="absolute bottom-0 w-full h-1 bg-white/20" />
-                  <Search className="relative z-20 text-white w-12 h-12 opacity-90 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
-                  
-                  {/* Floating Base */}
-                  <div className="absolute -bottom-10 w-32 h-4 bg-black/40 blur-xl rounded-full" />
-                </motion.div>
-
-                {/* Orbiting Satellite 1: Target */}
-                <motion.div 
-                  className="absolute"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  style={{ width: "300px", height: "300px" }}
-                >
-                  <motion.div 
-                    whileHover={{ scale: 1.2 }}
-                    className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#0f172a] rounded-full shadow-[0_0_20px_rgba(248,113,113,0.3)] border border-red-400/50 flex items-center justify-center animate-counter-spin cursor-pointer"
-                  >
-                    <Target className="w-6 h-6 text-red-400" />
-                  </motion.div>
-                </motion.div>
-
-                {/* Orbiting Satellite 2: Dollar/Growth */}
-                <motion.div 
-                  className="absolute"
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                  style={{ width: "450px", height: "450px" }}
-                >
-                  <motion.div 
-                    whileHover={{ scale: 1.2 }}
-                    className="absolute top-1/2 -right-6 -translate-y-1/2 w-12 h-12 bg-[#0f172a] rounded-full shadow-[0_0_20px_rgba(74,222,128,0.3)] border border-green-400/50 flex items-center justify-center animate-counter-spin cursor-pointer"
-                  >
-                    <DollarSign className="w-6 h-6 text-green-400" />
-                  </motion.div>
-                </motion.div>
-
-                {/* Orbiting Satellite 3: Ideas */}
-                <motion.div 
-                  className="absolute"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                  style={{ width: "450px", height: "450px" }}
-                >
-                  <motion.div 
-                    whileHover={{ scale: 1.2 }}
-                    className="absolute top-1/2 -left-6 -translate-y-1/2 w-12 h-12 bg-[#0f172a] rounded-full shadow-[0_0_20px_rgba(251,191,36,0.3)] border border-amber-400/50 flex items-center justify-center animate-counter-spin cursor-pointer"
-                  >
-                    <Lightbulb className="w-6 h-6 text-amber-400" />
-                  </motion.div>
-                </motion.div>
+          {/* --- LEFT COLUMN: CONTENT --- */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* Tagline */}
+            <div className="flex items-center gap-2 mb-6">
+              <span className="flex h-2 w-2 rounded-full bg-blue-400 animate-pulse"></span>
+              <span className="text-blue-400 font-medium tracking-wider text-sm uppercase">About Digi Crysta</span>
             </div>
 
-          </div>
-
-          {/* RIGHT: CONTENT */}
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="w-full lg:w-1/2 text-center lg:text-left"
-          >
-            <div className="mb-2 w-12 h-1 bg-blue-500 rounded-full mx-auto lg:mx-0" />
-            <h4 className="text-xs md:text-sm font-bold text-blue-400 tracking-widest uppercase mb-4">
-              About Our Agency
-            </h4>
-            
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
-              Get 30% Off Now <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-                on Digital Marketing Services in Noida
-              </span>
+            {/* Heading */}
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              Get <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+                30% Off
+                <svg className="absolute w-full h-3 -bottom-1 left-0 text-blue-500 opacity-50" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+                </svg>
+              </span> Now on Digital Services
             </h2>
-            
-            <p className="text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
-              As a division of Energy and Internet of Things, we are Digi Crysta, one of Noida's top digital marketing agencies. With more than 15+ workers from more than 100 skill sets, the company is based in Delhi NCR, the capital of India.
+
+            {/* Primary Text */}
+            <p className="text-lg text-slate-300 mb-6 leading-relaxed">
+              As a division of Energy and Internet of Things, we are <strong className="text-white">Digi Crysta</strong>, one of Noida's top digital marketing agencies. With more than 15+ workers from more than 100 skill sets, the company is based in Delhi NCR, the capital of India.
             </p>
-            
-            <p className="text-sm md:text-base text-gray-400 mb-8 leading-relaxed">
+
+            <p className="text-base text-slate-400 mb-8">
               In the Indian subcontinent, Digi Crysta has been a top supplier of technology and digital marketing (SEO, SEM, SMO, and PPC) staff augmentation and solutions since 2020.
             </p>
 
-            {/* EXPANDABLE TEXT SECTION */}
+            {/* Expandable Section */}
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
+                  className="overflow-hidden mb-8"
                 >
-                  <div className="text-sm md:text-base text-gray-300 mb-8 leading-relaxed border-l-2 border-blue-500 pl-4 bg-white/5 p-4 rounded-r-lg">
-                    <h5 className="font-bold text-white mb-2">Increase Business Productivity with Noida's Top Digital Marketing Firm, Digi Crysta</h5>
-                    <p className="mb-2">Our strategy is to use the same brand for the same purpose.</p>
-                    <p>In order to ensure that every phase of the shape design process goes well, we also begin by listening to our clients.</p>
+                  <div className="bg-white/5 border-l-4 border-blue-500 rounded-r-xl p-6 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-3 text-white font-semibold">
+                      <Sparkles className="w-5 h-5 text-yellow-400" />
+                      <h5>Increase Business Productivity</h5>
+                    </div>
+                    <ul className="space-y-3 text-slate-300 text-sm">
+                      <li className="flex gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-blue-400 mt-1 shrink-0" />
+                        Our strategy is to use the same brand for the same purpose.
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-blue-400 mt-1 shrink-0" />
+                        We ensure every phase of the shape design process goes well by listening to clients.
+                      </li>
+                    </ul>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <motion.div
-               whileHover={{ scale: 1.05 }}
-               whileTap={{ scale: 0.95 }}
-               className="inline-block"
+            {/* Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-semibold shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all duration-300 overflow-hidden"
             >
-              <button 
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="group flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all duration-300 mx-auto lg:mx-0"
-              >
-                {isExpanded ? 'Read Less' : 'Know More'}
-                <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? '-rotate-90' : 'group-hover:translate-x-1'}`} />
-              </button>
-            </motion.div>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              <span className="relative z-10">{isExpanded ? 'Read Less' : 'Know More'}</span>
+              <ArrowRight className={`w-5 h-5 relative z-10 transition-transform duration-300 ${isExpanded ? '-rotate-90' : 'group-hover:translate-x-1'}`} />
+            </motion.button>
           </motion.div>
+
+          {/* --- RIGHT COLUMN: STACKED CARDS --- */}
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="flex flex-col gap-5 relative"
+          >
+            {/* Decorative line behind cards */}
+            <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/30 to-transparent hidden md:block" />
+
+            {FEATURES.map((feature) => (
+              <div key={feature.id} className="relative">
+                {/* Connector Dot */}
+                <div className="absolute left-[30px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6] hidden md:block z-20"></div>
+                <div className="md:pl-16">
+                  <FeatureCard feature={feature} />
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
         </div>
-
       </div>
-
-      {/* --- CSS FOR ORBIT ANIMATIONS --- */}
-      <style>{`
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes spin-reverse-slow {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        /* Counter-spin keeps the icon upright while its parent container rotates */
-        @keyframes counter-spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(-360deg); }
-        }
-        
-        .animate-spin-slow {
-          animation: spin-slow 20s linear infinite;
-        }
-        .animate-spin-reverse-slow {
-          animation: spin-reverse-slow 25s linear infinite;
-        }
-        .animate-counter-spin {
-          animation: counter-spin 20s linear infinite;
-        }
-      `}</style>
     </section>
   );
 };

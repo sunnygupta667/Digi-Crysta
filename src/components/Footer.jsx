@@ -1,23 +1,23 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-  FaCloud, 
   FaMapMarkerAlt, 
-  FaPhoneVolume, 
+  FaPhoneAlt, 
+  FaEnvelope, 
   FaTwitter, 
   FaFacebookF, 
   FaLinkedinIn, 
   FaYoutube, 
-  FaPinterestP 
+  FaPinterestP,
+  FaArrowRight
 } from 'react-icons/fa';
 
-import footerHero from "../assets/images/footerHero2.jpg"; // ✅ MOVE HERE
-import cloud from "../assets/images/cloud.png"; // ✅ MOVE HERE
-
-
+// Assets (Keep your existing paths)
+import footerHero from "../assets/images/footerHero.jpg"; 
+import cloud from "../assets/images/cloud.png"; 
 
 // ==========================================
-// CONFIGURATION: EDIT LINKS & PATHS HERE
+// CONFIGURATION
 // ==========================================
 const SITE_CONFIG = {
   background: footerHero, 
@@ -29,18 +29,18 @@ const SITE_CONFIG = {
     { name: "Blogs", path: "/blog" },
   ],
   serviceLinks: [
-    { name: "Website Designing Development", path: "/website-designing-development" },
-    { name: "Mobile App Development", path: "/mobile-app-development" },
-    { name: "PPC Bing", path: "/ppc-bing" },
-    { name: "Search Engine Optimization", path: "/search-engine-optimization" },
-    { name: "Facebook Advertising", path: "/facebook-advertising" },
+    { name: "Website Design", path: "/website-designing-development" },
+    { name: "App Development", path: "/mobile-app-development" },
+    { name: "PPC Management", path: "/ppc-bing" },
+    { name: "SEO Services", path: "/search-engine-optimization" },
+    { name: "Social Media Ads", path: "/facebook-advertising" },
   ],
   socials: [
-    { icon: <FaTwitter />, url: "https://twitter.com", label: "Twitter" },
-    { icon: <FaFacebookF />, url: "https://facebook.com", label: "Facebook" },
-    { icon: <FaLinkedinIn />, url: "https://linkedin.com", label: "LinkedIn" },
-    { icon: <FaYoutube />, url: "https://youtube.com", label: "YouTube" },
-    { icon: <FaPinterestP />, url: "https://pinterest.com", label: "Pinterest" },
+    { icon: <FaTwitter />, url: "https://twitter.com", color: "hover:bg-sky-500" },
+    { icon: <FaFacebookF />, url: "https://facebook.com", color: "hover:bg-blue-600" },
+    { icon: <FaLinkedinIn />, url: "https://linkedin.com", color: "hover:bg-blue-700" },
+    { icon: <FaYoutube />, url: "https://youtube.com", color: "hover:bg-red-600" },
+    { icon: <FaPinterestP />, url: "https://pinterest.com", color: "hover:bg-red-500" },
   ]
 };
 
@@ -51,197 +51,197 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 
-    transition: { staggerChildren: 0.1, duration: 0.8 } 
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 } 
   }
 };
 
-const itemVariants = {
+const itemUp = {
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
 };
 
-const linkHover = {
-  x: 5,
-  color: "#ffffff",
-  transition: { type: "spring", stiffness: 300 }
+// ==========================================
+// SUB-COMPONENT: DIGITAL DUST PARTICLES
+// ==========================================
+const DigitalDust = () => {
+  // Create 15 random particles
+  const particles = Array.from({ length: 15 });
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((_, i) => {
+        // Randomize initial positions and animation properties
+        const randomLeft = Math.random() * 100;
+        const randomTop = Math.random() * 100;
+        const duration = Math.random() * 10 + 10; // Slow movement (10-20s)
+        const delay = Math.random() * 5;
+
+        return (
+          <motion.div
+            key={i}
+            className="absolute bg-blue-400 rounded-full opacity-20"
+            style={{
+              left: `${randomLeft}%`,
+              top: `${randomTop}%`,
+              width: Math.random() * 4 + 2 + 'px', // Size 2px - 6px
+              height: Math.random() * 4 + 2 + 'px',
+            }}
+            animate={{
+              y: [0, -30, 0], // Float up and down
+              x: [0, Math.random() * 20 - 10, 0], // Slight horizontal drift
+              opacity: [0.1, 0.5, 0.1], // Pulse effect
+            }}
+            transition={{
+              duration: duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: delay,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
 };
 
-const socialHover = {
-  y: -3,
-  rotate: 360,
-  backgroundColor: "#0047ab",
-  borderColor: "#0047ab",
-  color: "#fff",
-  transition: { duration: 0.4 }
-};
-
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
 const Footer = () => {
   return (
-    <footer className="relative bg-[#021333] text-white pt-20 pb-10 overflow-hidden font-sans">
+    <footer className="relative bg-[#021333] text-white overflow-hidden font-sans border-t border-white/5">
       
-      {/* Background Image & Overlay */}
+      {/* --- BACKGROUND LAYER --- */}
       <div className="absolute inset-0 z-0">
+        {/* Static Background Image with strong overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-top bg-no-repeat opacity-100"
+          className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-overlay"
           style={{ backgroundImage: `url('${SITE_CONFIG.background}')` }}
         />
-        {/* Gradient Overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#062863]/95 to-[#021333]/95" />
+        
+        {/* Animated Digital Dust (High Performance) */}
+        <DigitalDust />
+
+        {/* Subtle Ambient Gradient Blobs */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]" />
       </div>
 
       <motion.div 
-        className="relative z-10 container mx-auto px-6 lg:px-12"
+        className="relative z-10 container mx-auto px-6 lg:px-12 pt-20 pb-10"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
         
-        {/* --- Header Section (Logo & Contact) --- */}
-        <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start gap-10 mb-12">
+        {/* GRID LAYOUT ADJUSTMENT:
+           Grid changed to 4 columns. 
+           - Brand Info takes 2 columns (50% width)
+           - Company Links takes 1 column (25% width)
+           - Service Links takes 1 column (25% width)
+        */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <img src={cloud} alt="Cloud Logo" className="w-10 h-10" />
-            <div>
-              <h2 className="text-2xl font-bold tracking-wide">Digi Crysta</h2>
-            </div>
-          </div>
-
-          {/* Contact Info */}
-          <div className="flex flex-col md:flex-row gap-8 text-[#b3c0d9]">
-            <div className="flex items-start gap-4 group">
-              <div className="mt-1 p-3 rounded-full border border-white/10 text-blue-400 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300">
-                <FaMapMarkerAlt />
+          {/* ==========================
+              COLUMN 1 & 2: BRAND & INFO (Expanded)
+             ========================== */}
+          <motion.div variants={itemUp} className="lg:col-span-2 flex flex-col gap-6 pr-0 lg:pr-12">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                <img src={cloud} alt="Digi Crysta" className="w-10 h-10 object-contain" />
               </div>
               <div>
-                <span className="block text-white font-medium">Noida</span>
-                <span>Uttar Pradesh</span>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Digi Crysta</h2>
+                <p className="text-xs text-blue-300 tracking-widest uppercase">Digital Excellence</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 group">
-              <div className="mt-1 p-3 rounded-full border border-white/10 text-blue-400 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300">
-                <FaPhoneVolume />
+            <p className="text-gray-400 leading-relaxed text-sm md:text-base max-w-lg">
+              Empowering businesses with cutting-edge digital solutions. We combine creativity with technical expertise to deliver results that matter. From Noida to the global stage, we are your partners in growth.
+            </p>
+
+            {/* Contact Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+              <div className="flex items-start gap-3 text-gray-300 group">
+                <FaMapMarkerAlt className="mt-1 text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
+                <span className="text-sm group-hover:text-white transition-colors">Noida, Uttar Pradesh, India</span>
               </div>
-              <div className="flex flex-col">
-                <a href="tel:+918810308567" className="hover:text-white transition-colors">+91 8810308567 ( Toll free )</a>
-                <a href="mailto:digicrysta@gmail.com" className="hover:text-white transition-colors">digicrysta@gmail.com</a>
+              <div className="flex items-center gap-3 text-gray-300 group">
+                <FaPhoneAlt className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
+                <a href="tel:+918810308567" className="text-sm group-hover:text-white transition-colors">+91 8810308567</a>
+              </div>
+              <div className="flex items-center gap-3 text-gray-300 group sm:col-span-2">
+                <FaEnvelope className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
+                <a href="mailto:digicrysta@gmail.com" className="text-sm group-hover:text-white transition-colors">digicrysta@gmail.com</a>
               </div>
             </div>
-          </div>
-        </motion.div>
 
-        <motion.hr variants={itemVariants} className="border-white/10 mb-12" />
+            {/* Social Icons */}
+            <div className="flex gap-3 pt-4">
+              {SITE_CONFIG.socials.map((social, idx) => (
+                <motion.a 
+                  key={idx}
+                  href={social.url}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-gray-400 transition-all duration-300 ${social.color} hover:text-white hover:-translate-y-1`}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {social.icon}
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
 
-        {/* --- Main Grid Section --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          
-          {/* Column 1: Company */}
-          <motion.div variants={itemVariants}>
-            <h3 className="text-xl font-semibold mb-6 relative inline-block">
+          {/* ==========================
+              COLUMN 3: COMPANY LINKS
+             ========================== */}
+          <motion.div variants={itemUp} className="lg:col-span-1">
+            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+              <span className="w-1 h-5 bg-blue-500 rounded-full"></span>
               Company
-              <span className="absolute left-0 -bottom-2 w-8 h-1 bg-blue-600 rounded-full"></span>
             </h3>
             <ul className="space-y-3">
               {SITE_CONFIG.companyLinks.map((link, idx) => (
                 <li key={idx}>
-                  <motion.a 
-                    href={link.path} 
-                    className="text-[#b3c0d9] inline-block"
-                    whileHover={linkHover}
-                  >
-                    {link.name}
-                  </motion.a>
+                  <a href={link.path} className="group flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-all text-sm">
+                    <FaArrowRight className="text-[10px] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
+                  </a>
                 </li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Column 2: Services */}
-          <motion.div variants={itemVariants}>
-            <h3 className="text-xl font-semibold mb-6 relative inline-block">
+          {/* ==========================
+              COLUMN 4: SERVICE LINKS
+             ========================== */}
+          <motion.div variants={itemUp} className="lg:col-span-1">
+            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+              <span className="w-1 h-5 bg-blue-500 rounded-full"></span>
               Services
-              <span className="absolute left-0 -bottom-2 w-8 h-1 bg-blue-600 rounded-full"></span>
             </h3>
             <ul className="space-y-3">
               {SITE_CONFIG.serviceLinks.map((link, idx) => (
                 <li key={idx}>
-                  <motion.a 
-                    href={link.path} 
-                    className="text-[#b3c0d9] inline-block"
-                    whileHover={linkHover}
-                  >
-                    {link.name}
-                  </motion.a>
+                  <a href={link.path} className="group flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-all text-sm">
+                    <FaArrowRight className="text-[10px] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
+                  </a>
                 </li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Column 3: Quick Enquiry */}
-          <motion.div variants={itemVariants} className="lg:justify-self-end w-full max-w-sm">
-            <h3 className="text-xl font-semibold mb-6 relative inline-block">
-              Quick Enquiry
-              <span className="absolute left-0 -bottom-2 w-8 h-1 bg-blue-600 rounded-full"></span>
-            </h3>
-            <form className="space-y-4">
-              <motion.div whileFocus={{ scale: 1.02 }}>
-                <input 
-                  type="text" 
-                  placeholder="Name" 
-                  className="w-full bg-[#052c65]/80 border border-white/10 rounded px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:bg-[#021333] transition-colors placeholder-gray-400"
-                  required
-                />
-              </motion.div>
-              <motion.div whileFocus={{ scale: 1.02 }}>
-                <input 
-                  type="tel" 
-                  placeholder="Phone" 
-                  className="w-full bg-[#052c65]/80 border border-white/10 rounded px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:bg-[#021333] transition-colors placeholder-gray-400"
-                  required
-                />
-              </motion.div>
-              <motion.div whileFocus={{ scale: 1.02 }}>
-                <textarea 
-                  placeholder="Message" 
-                  rows="3" 
-                  className="w-full bg-[#052c65]/80 border border-white/10 rounded px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:bg-[#021333] transition-colors resize-none placeholder-gray-400"
-                  required
-                ></textarea>
-              </motion.div>
-              <motion.button 
-                type="submit"
-                whileHover={{ scale: 1.02, boxShadow: "0px 5px 15px rgba(0, 71, 171, 0.4)" }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 bg-[#0047ab] text-white text-sm font-medium uppercase tracking-wider rounded hover:bg-blue-700 transition-colors w-auto"
-              >
-                Submit now
-              </motion.button>
-            </form>
-          </motion.div>
         </div>
 
-        {/* --- Bottom Section --- */}
-        <motion.div 
-          variants={itemVariants}
-          className="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-6"
-        >
-          <p className="text-sm text-[#b3c0d9]">Copyright © 2019, All Right Reserved</p>
-          
-          <div className="flex gap-3">
-            {SITE_CONFIG.socials.map((social, idx) => (
-              <motion.a 
-                key={idx}
-                href={social.url}
-                aria-label={social.label}
-                className="w-9 h-9 flex items-center justify-center rounded-full border border-white/20 text-[#b3c0d9]"
-                whileHover={socialHover}
-                whileTap={{ scale: 0.9 }}
-              >
-                {social.icon}
-              </motion.a>
-            ))}
+        {/* --- BOTTOM BAR --- */}
+        <motion.div variants={itemUp} className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+          <p>© {new Date().getFullYear()} Digi Crysta. All Rights Reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
           </div>
         </motion.div>
 
